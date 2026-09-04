@@ -1,0 +1,27 @@
+# Environment and secrets
+.env
+.env.*
+!.env.example
+
+# Dependencies
+node_modules/
+
+# Build output
+dist/
+frontend/dist/
+
+# Runtime uploads are stored in Cloudinary for production
+uploads/
+backend/uploads/
+
+# Local duplicate of the served logo
+frontend/shop_logo.jpeg
+
+# Logs and local tooling
+*.log
+npm-debug.log*
+.yarn/
+.pnpm-store/
+.vscode/
+.idea/
+.DS_Store
