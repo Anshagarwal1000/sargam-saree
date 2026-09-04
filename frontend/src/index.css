@@ -48,6 +48,7 @@ h1 { max-width: 600px; margin: 14px 0 14px; color: #332b2a; font-family: 'Playfa
 .catalog-count { display: flex; align-items: baseline; gap: 7px; color: #756763; font-size: 13px; white-space: nowrap; }
 .catalog-count strong { color: #912d43; font-family: 'Playfair Display', serif; font-size: 34px; }
 .catalog-tools { display: grid; grid-template-columns: minmax(220px, 1.5fr) 1fr 1fr; gap: 14px; padding: 18px; margin-bottom: 38px; background: #332b2a; color: #fffaf5; box-shadow: 12px 12px 0 #e6c5b5; }
+.admin-product-tools { grid-template-columns: minmax(220px, 1.5fr) 1fr 1fr; }
 .catalog-tools label { display: grid; gap: 7px; font-size: 10px; font-weight: 700; letter-spacing: 1.2px; text-transform: uppercase; }
 .catalog-tools input, .catalog-tools select { width: 100%; border: 1px solid #75615a; border-radius: 2px; padding: 12px 13px; color: #332b2a; background: #fffaf5; font: inherit; outline: none; }
 .catalog-tools input:focus, .catalog-tools select:focus { border-color: #e4a27f; box-shadow: 0 0 0 2px rgba(228, 162, 127, .25); }
@@ -137,6 +138,7 @@ h1 { max-width: 600px; margin: 14px 0 14px; color: #332b2a; font-family: 'Playfa
   .catalog-section { padding: 42px 18px 56px; }
   .catalog-heading { align-items: flex-start; flex-direction: column; gap: 10px; }
   .catalog-tools { grid-template-columns: 1fr; box-shadow: 7px 7px 0 #e6c5b5; }
+  .admin-product-tools { grid-template-columns: 1fr; }
   .product-gallery, .product-image-placeholder { height: 250px; }
   .site-footer { padding: 40px 18px; }
   .site-footer-inner, .footer-contact { grid-template-columns: 1fr; gap: 26px; }

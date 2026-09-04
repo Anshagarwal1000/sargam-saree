@@ -14,6 +14,9 @@ export default function ProductsAdmin() {
 
   const [categories, setCategories] = useState([]);
   const [products, setProducts] = useState([]);
+  const [search, setSearch] = useState("");
+  const [categoryFilter, setCategoryFilter] = useState("");
+  const [sort, setSort] = useState("newest");
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
@@ -32,6 +35,34 @@ export default function ProductsAdmin() {
   const [editingId, setEditingId] = useState(null);
 
   const isEditing = useMemo(() => Boolean(editingId), [editingId]);
+
+  const filteredProducts = useMemo(() => {
+    const normalizedSearch = search.trim().toLowerCase();
+    const matchingProducts = products.filter((product) => {
+      const categoryId = typeof product.categoryId === "string"
+        ? product.categoryId
+        : product.categoryId?._id || "";
+      const matchesCategory = !categoryFilter || categoryId === categoryFilter;
+      const searchableText = [
+        product.name,
+        product.modelNumber,
+        product.sku,
+        product.categoryId?.name,
+      ].filter(Boolean).join(" ").toLowerCase();
+      return matchesCategory && (!normalizedSearch || searchableText.includes(normalizedSearch));
+    });
+
+    return [...matchingProducts].sort((first, second) => {
+      if (sort === "price_asc" || sort === "price_desc") {
+        const direction = sort === "price_asc" ? 1 : -1;
+        return (Number(first.priceMin ?? first.price) - Number(second.priceMin ?? second.price)) * direction;
+      }
+      if (sort === "model") {
+        return String(first.modelNumber || first.sku || "").localeCompare(String(second.modelNumber || second.sku || ""));
+      }
+      return new Date(second.createdAt || 0) - new Date(first.createdAt || 0);
+    });
+  }, [categoryFilter, products, search, sort]);
 
   async function loadAll() {
     setLoading(true);
@@ -335,14 +366,66 @@ export default function ProductsAdmin() {
       </form>
 
       <div style={{ marginTop: 18 }}>
-        <h3 style={{ marginBottom: 10 }}>Product List</h3>
+        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "end", gap: 12, flexWrap: "wrap" }}>
+          <h3 style={{ marginBottom: 10 }}>Product List</h3>
+          <strong style={{ color: "#666", fontSize: 13 }}>{filteredProducts.length} styles</strong>
+        </div>
+
+        <div
+          className="admin-product-tools"
+          style={{
+            display: "grid",
+            gap: 10,
+            padding: 14,
+            marginBottom: 14,
+            background: "#332b2a",
+            color: "white",
+          }}
+        >
+          <label style={{ display: "grid", gap: 6, fontSize: 12, fontWeight: 700 }}>
+            Search products
+            <input
+              value={search}
+              onChange={(event) => setSearch(event.target.value)}
+              placeholder="Name, model number or SKU"
+              style={{ padding: 10, borderRadius: 4, border: "1px solid #75615a" }}
+            />
+          </label>
+          <label style={{ display: "grid", gap: 6, fontSize: 12, fontWeight: 700 }}>
+            Category
+            <select
+              value={categoryFilter}
+              onChange={(event) => setCategoryFilter(event.target.value)}
+              style={{ padding: 10, borderRadius: 4, border: "1px solid #75615a" }}
+            >
+              <option value="">All categories</option>
+              {categories.map((category) => (
+                <option key={category._id} value={category._id}>{category.name}</option>
+              ))}
+            </select>
+          </label>
+          <label style={{ display: "grid", gap: 6, fontSize: 12, fontWeight: 700 }}>
+            Sort by
+            <select
+              value={sort}
+              onChange={(event) => setSort(event.target.value)}
+              style={{ padding: 10, borderRadius: 4, border: "1px solid #75615a" }}
+            >
+              <option value="newest">Newest arrivals</option>
+              <option value="price_asc">Price: low to high</option>
+              <option value="price_desc">Price: high to low</option>
+              <option value="model">Model number</option>
+            </select>
+          </label>
+        </div>
 
         {loading ? <p>Loading...</p> : null}
         {!loading && products.length === 0 ? <p>No products yet.</p> : null}
+        {!loading && products.length > 0 && filteredProducts.length === 0 ? <p>No products match those filters.</p> : null}
 
-        {!loading && products.length > 0 ? (
+        {!loading && filteredProducts.length > 0 ? (
           <div style={{ display: "grid", gap: 10 }}>
-            {products.map((p) => (
+            {filteredProducts.map((p) => (
               <div
                 key={p._id}
                 style={{
