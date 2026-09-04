@@ -11,10 +11,19 @@ import productsRouter from "./routes/products.js";
 const app = express();
 const port = process.env.PORT || 3000;
 const uploadsPath = path.join(path.dirname(fileURLToPath(import.meta.url)), "uploads");
+const allowedOrigins = (process.env.CLIENT_ORIGINS || process.env.CLIENT_ORIGIN || "http://localhost:5173")
+  .split(",")
+  .map((origin) => origin.trim().replace(/\/$/, ""))
+  .filter(Boolean);
 
 app.use(
   cors({
-    origin: process.env.CLIENT_ORIGIN || "http://localhost:5173",
+    origin: (origin, callback) => {
+      if (!origin || allowedOrigins.includes(origin.replace(/\/$/, "")) || /^https:\/\/[^/]+\.vercel\.app$/.test(origin)) {
+        return callback(null, true);
+      }
+      callback(new Error("Origin is not allowed by CORS"));
+    },
     credentials: true,
   })
 );
