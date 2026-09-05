@@ -72,7 +72,7 @@ function ProductCard({ product }) {
   );
 }
 
-export default function Catalog({ categorySlug = "", title = "The Saree Edit" }) {
+export default function Catalog({ categorySlug = "", title = "Sargam Sarees" }) {
   const [categories, setCategories] = useState([]);
   const [products, setProducts] = useState([]);
   const [search, setSearch] = useState("");
